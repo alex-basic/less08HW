@@ -13,23 +13,21 @@ public class ChatClientAppl {
     public static void main(String[] args) throws InterruptedException {
         String serverHost = "127.0.0.1";
         int port = 9000;
-        ExecutorService executorService = Executors.newCachedThreadPool();
 
+        Socket socket = null;
         try {
-            Socket socket = new Socket(serverHost, port);
-             MessageSender messageSender = new MessageSender(socket);
-             MessageReceiver messageReceive = new MessageReceiver(socket);
+            socket = new Socket(serverHost, port);
+            Thread taskMessageSender = new Thread(new MessageSender(socket));
+            taskMessageSender.setDaemon(true);
 
-            executorService.execute(messageReceive);
-            executorService.execute(messageSender);
+            Thread taskMessageReceiver = new Thread(new MessageReceiver(socket));
+            taskMessageReceiver.setDaemon(true);
 
+            taskMessageReceiver.start();
+            taskMessageSender.start();
+            taskMessageSender.join();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            executorService.shutdown();
-            executorService.awaitTermination(1, TimeUnit.MINUTES);
         }
-
-
     }
 }
