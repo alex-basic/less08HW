@@ -13,7 +13,7 @@ public class ChatClientAppl {
     public static void main(String[] args) throws InterruptedException {
         String serverHost = "127.0.0.1";
         int port = 9000;
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newCachedThreadPool();
 
         try {
             Socket socket = new Socket(serverHost, port);
